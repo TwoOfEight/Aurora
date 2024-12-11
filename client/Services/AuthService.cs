@@ -14,10 +14,12 @@ namespace client.Components.Services
             _httpClient = httpClient;
         }
 
-        // Login API Call
         public async Task<AuthResponse?> LoginAsync(AuthRequest request)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Auth/login", request);
+
+            Console.WriteLine($"Request URL: {_httpClient.BaseAddress}api/Auth/login");
+            Console.WriteLine($"Request Body: Username = {request.UserName}, Password = {request.Password}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -25,9 +27,12 @@ namespace client.Components.Services
             }
             else
             {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Login failed: {response.StatusCode}, Response: {errorContent}");
                 throw new HttpRequestException($"Login failed: {response.ReasonPhrase}");
             }
         }
+
 
         // Register API Call
         public async Task<AuthResponse?> RegisterAsync(RegisterRequest request)
