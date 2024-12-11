@@ -1,0 +1,53 @@
+﻿@page "/login"
+@inject AuthService AuthService
+@using client.Models
+
+<h3>Login</h3>
+
+@if (errorMessage != null)
+{
+    <p style="color: red;">@errorMessage</p>
+}
+
+<div>
+    <label>Username:</label>
+    <input @bind="userName" placeholder="Enter username" />
+</div>
+<div>
+    <label>Password:</label>
+    <input type="password" @bind="password" placeholder="Enter password" />
+</div>
+
+<button @onclick="HandleLogin">Login</button>
+
+@if (authResponse != null)
+{
+    <p>Welcome, @authResponse.User.Name!</p>
+    <p>Your Token: @authResponse.AuthToken</p>
+}
+
+@code {
+    private string userName;
+    private string password;
+    private AuthResponse authResponse;
+    private string errorMessage;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var authRequest = new AuthRequest
+            {
+                UserName = userName,
+                Password = password
+            };
+
+            authResponse = await AuthService.LoginAsync(authRequest);
+            errorMessage = null;
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

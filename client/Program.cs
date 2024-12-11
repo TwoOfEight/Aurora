@@ -1,10 +1,19 @@
 using client.Components;
+using client.Components.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
+builder.Services
+    .AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped(sp => new HttpClient 
+{
+    BaseAddress = new Uri("http://localhost:5271")
+});
+
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 
